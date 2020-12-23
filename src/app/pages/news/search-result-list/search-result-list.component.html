@@ -1,0 +1,255 @@
+<div class="breadcrumbs-sec">
+    <div class="container">
+        <ul class="breadcrubs-list previous-page">
+            <li (click)="goBack()">
+                <a href="javascript:void(0)" title="Back">Back</a>
+            </li>
+        </ul>
+        <div class="dropbox-sec">
+            <ul [ngClass]="{'exist-count': searchCount > 0}">
+                <li class="show-result" *ngIf="totalSearchResult > 0">
+                    <span *ngIf="totalSearchResult > 1">Showing {{totalSearchResult}} results</span>
+                    <span *ngIf="totalSearchResult == 1">Showing {{totalSearchResult}} result</span>
+                </li>
+
+                <li class="institution-drop">
+                    <button class="btn-dropbox btn-border institute" (click)="showInstitutionList()"
+                        [ngClass]="{'selected': institutionSearchCount > 0}" type="button">institution <span
+                            class="institute" *ngIf="institutionSearchCount > 0">​({{institutionSearchCount}})</span> <i
+                            class="fa fa-caret-down institute"></i></button>
+                    <div class="dropdown-content institute" *ngIf="showInstitution"
+                        [ngClass]="{'show' : showInstitution}">
+                        <div class="dropdown-search pos-rel institute">
+                            <input type="text" onfocus="this.ph=this.placeholder;this.placeholder=''"
+                                onblur="this.placeholder = this.ph" placeholder="Add an institution​"
+                                [(ngModel)]="instituteKeyword"
+                                class="form-control institute search-institute" (focus)="searchInstitutionFromList($event)"
+                                (input)="searchInstitutionFromList($event)">
+                            <div
+                                class="suggestion-list institute search-institute loader-section"
+                                *ngIf="institutionType && isInsSearchAPIStart"
+                              >
+                                <div class="bouncing-loader">
+                                  <div></div>
+                                  <div></div>
+                                  <div></div>
+                                </div>
+                            </div>
+                            <div class="suggestion-list institute search-institute"
+                                *ngIf="institutionType && searchInstituteList?.length > 0 && !isInsSearchAPIStart">
+                                <cdk-virtual-scroll-viewport itemSize="20" class="institute search-institute" [ngClass]="{ 'more-data': searchInstituteList?.length > 2 }">
+                                    <div *cdkVirtualFor="let item of searchInstituteList; let index = index;"
+                                        (click)="selectInstituteForSearch(item)"
+                                        class="institute search-institute institute-list">
+                                        {{item?.display_name}}
+                                    </div>
+                                </cdk-virtual-scroll-viewport>
+                            </div>
+                        </div>
+                        <ul class="filter-list institute"
+                            *ngIf="frequentInstituteList?.length > 0 && allFrequentInstituteList?.length > 0">
+                            <li class="institute" *ngFor="let item of frequentInstituteList; let index = index;">
+                                <label class="checkbox-block institute">
+                                    <input type="checkbox" class="institute" name={{item?.id}} [checked]="item.selected"
+                                        (click)="selectInstituteSearch(item)">
+                                    <span class="checkmark institute"></span>
+                                </label>
+                                <span class="filter-text institute">{{item?.display_name}}</span>
+                            </li>
+                        </ul>
+                        <ul class="filter-list institute"
+                            *ngIf="frequentInstituteList?.length == 0 || allFrequentInstituteList?.length == 0"
+                            infiniteScroll (scrolled)="onInstituteScroll($event)" [scrollWindow]="false">
+                            <li class="institute" *ngFor="let item of existInstituteList; let index = index;">
+                                <label class="checkbox-block institute">
+                                    <input type="checkbox" class="institute" name={{item?.id}} [checked]="item.selected"
+                                        (click)="selectInstituteForSearch(item)">
+                                    <span class="checkmark institute"></span>
+                                </label>
+                                <span class="filter-text institute">{{item?.display_name}}</span>
+                            </li>
+                        </ul>
+                        <ul class="btn-list institute">
+                            <li class="institute">
+                                <button *ngIf="!selectInstitute" class="btn-cancel btn-primary institute" type="reset"
+                                    (click)="cancelInstituteASearchData()">Cancel</button>
+                                <button *ngIf="selectInstitute" class="btn-cancel btn-primary institute" type="reset"
+                                    (click)="clearInstituteASearchData()">Clear</button>
+                            </li>
+                            <li class="institute">
+                                <button class="btn-apply btn-primary institute" type="submit"
+                                    (click)="applyInstitueSearchOnData()">Apply</button>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <button class="btn-dropbox btn-border area" (click)="showAreaList()"
+                        [ngClass]="{'selected': areaSearchCount > 0}" type="button">area <span class="area"
+                            *ngIf="areaSearchCount > 0">({{areaSearchCount}})</span> <i
+                            class="fa fa-caret-down area"></i></button>
+                    <div class="dropdown-content area" *ngIf="showArea" [ngClass]="{'show' : showArea}">
+                        <div class="dropdown-search area">
+                            <input type="text" onfocus="this.ph=this.placeholder;this.placeholder=''"
+                                onblur="this.placeholder = this.ph" placeholder="Add an area​" [(ngModel)]="areaKeyword"
+                                class="form-control area search-area" (focus)="searchAreaFromList($event)" 
+                                (input)="searchAreaFromList($event)">
+                            <div
+                                class="suggestion-list area search-area loader-section"
+                                *ngIf="areaType && isAreaSearchAPIStart"
+                              >
+                                <div class="bouncing-loader">
+                                  <div></div>
+                                  <div></div>
+                                  <div></div>
+                                </div>
+                            </div>
+                            <div class="suggestion-list area search-area"
+                                *ngIf="areaType && searchAreaList?.length > 0 && !isAreaSearchAPIStart">
+                                <cdk-virtual-scroll-viewport itemSize="20" class="area search-area" [ngClass]="{ 'more-data': searchAreaList?.length > 2 }">
+                                    <div *cdkVirtualFor="let item of searchAreaList; let index = index;"
+                                        (click)="selectAreaForSearch(item)" class="area search-area area-list">
+                                        {{item?.name}}
+                                    </div>
+                                </cdk-virtual-scroll-viewport>
+                            </div>
+                        </div>
+                        <ul class="filter-list area"
+                            *ngIf="frequentAreaList?.length > 0 && allFrequentAreaList?.length > 0">
+                            <li class="area" *ngFor="let item of frequentAreaList; let index = index;">
+                                <label class="checkbox-block area">
+                                    <input type="checkbox" class="area" name={{item?.id}} [checked]="item.selected"
+                                        (click)="selectAreaSearch(item)">
+                                    <span class="checkmark area"></span>
+                                </label>
+                                <span class="filter-text area">{{item?.name}}</span>
+                            </li>
+                        </ul>
+                        <ul class="filter-list area"
+                            *ngIf="frequentAreaList?.length == 0 || allFrequentAreaList?.length == 0" infiniteScroll
+                            (scrolled)="onAreaScroll($event)" [scrollWindow]="false">
+                            <li class="area" *ngFor="let item of existAreaList; let index = index;">
+                                <label class="checkbox-block area">
+                                    <input type="checkbox" class="area" name={{item?.id}} [checked]="item.selected"
+                                        (click)="selectAreaForSearch(item)">
+                                    <span class="checkmark area"></span>
+                                </label>
+                                <span class="filter-text area">{{item?.name}}</span>
+                            </li>
+                        </ul>
+                        <ul class="btn-list area">
+                            <li class="area">
+                                <button *ngIf="!selectArea" class="btn-cancel btn-primary area" type="reset"
+                                    (click)="cancelAreaASearchData()">Cancel</button>
+                                <button *ngIf="selectArea" class="btn-cancel btn-primary area" type="reset"
+                                    (click)="clearAreaASearchData()">Clear</button>
+                            </li>
+                            <li class="area">
+                                <button class="btn-apply btn-primary area" type="submit"
+                                    (click)="applyAearSearchOnData()">Apply</button>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <h6 class="clear-class" (click)="clearSearchData()">Clear <span *ngIf="searchCount > 0">{{searchCount}}</span></h6>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="sec-news">
+    <div class="container">
+        <!-- listing content-->
+        <div class="news-list" *ngIf="newsData?.length > 0 && isPageLoad" infiniteScroll (scrolled)="onScroll($event)">
+            <div class="row">
+                <div class="col-md-6" *ngFor="let item of newsData; let index = index; ">
+                    <div class="news-block">
+                        <div class="content-area">
+                            <div class="img-sec round" [class.img-loading]="!item?.imageLoad"
+                                [ngClass]="{'img-round-sec' : item?.News_image_url == ''}">
+                                <a href="javascript:void(0)" (click)="opennewsDetail(item)">
+                                    <img [src]="item?.News_image_url" (error)="checkImageExistorNot(item)"
+                                        *ngIf="item?.News_image_url" (load)="imageLoadSuccess(item)">
+                                    <span class="text-round"
+                                        *ngIf="!item?.News_image_url">{{item?.News_short_name}}</span>
+                                </a>
+                                <app-news-star-view [newsData]="item" class="dashboard-fav"></app-news-star-view>
+                            </div>
+                            <div class="content" (click)="opennewsDetail(item)">
+                                <div class="info-sec">
+                                    <h3>
+                                        <a href="javascript:void(0)">{{item?.News_full_name}}</a>
+                                    </h3>
+                                    <p *ngIf="item?.News_qualification && item?.News_full_name">
+                                        {{item?.News_qualification}}</p>
+
+
+                                </div>
+                            </div>
+
+                            <!--new-design-start-->
+                            <p *ngFor="let list of item?.institutionsData; let ind = index;" (click)="opennewsDetail(item)">
+                                <span *ngIf="ind < 2">
+                                    <span class="clg-name">{{list?.name}} </span>
+                                    <span class="clg-location"> {{list?.location}}</span>
+                                    <span *ngIf="ind == 1 && item?.institutionsData.length > 2">...</span>
+                                </span>
+                            </p>
+                            <!--new-design-end-->
+
+                            <div class="badge-area" (click)="opennewsDetail(item)">
+                                <div class="badge-sec">
+                                    <span class="badge red-bg"
+                                        *ngIf="item?.News_notification_count > 0 && item?.favourite">
+                                        <span *ngIf="item?.News_notification_count >= 1000">999+</span>
+                                        <span
+                                            *ngIf="item?.News_notification_count < 1000">{{item?.News_notification_count}}</span>
+                                    </span>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bouncing-loader" *ngIf="isLoadMore">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div class="no-result-foo" *ngIf="!advancedSearchData">
+                <p class="no-result-helper-text">Didn't find what you were looking for?
+                    <span>
+                        <a href="javascript:void(0)" [routerLink]="openPageUrl()">Let us know</a>
+                    </span> and we'll add the News to demo.</p>
+            </div>
+        </div>
+        <!-- listing content end-->
+        <!--no data start-->
+        <!-- <div class="news-list no-news" *ngIf="newsData?.length == 0 && !isLAPP">
+            <div class="no-news-sec">
+                <h3>No Result Found.</h3>
+            </div>
+        </div> -->
+        <div class="news-list no-news" *ngIf="newsData?.length == 0 && isPageLoad && !advancedSearchData">
+            <div class="no-news-sec no-News-content">
+                <!-- <h3>No Result Found.</h3> -->
+                <p>Please try with a different search term.
+                    <br>Still didn't find what you were looking for?
+                    <span><br>
+                        <a href="javascript:void(0)" [routerLink]="openPageUrl()">Let us know</a>
+                    </span> and we'll add the News to demo.
+                </p>
+            </div>
+        </div>
+        <div class="news-list no-news" *ngIf="newsData?.length == 0 && isPageLoad && advancedSearchData">
+            <div class="no-news-sec no-News-content">
+                <p>
+                    No results found. Please modify your search criteria.
+                </p>
+            </div>
+        </div>
+        <!--no data ends-->
+    </div>
+</div>

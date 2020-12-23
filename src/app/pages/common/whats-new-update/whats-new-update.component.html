@@ -1,0 +1,11 @@
+<div class="what-next-content" infiniteScroll (scrolled)="onScroll($event)" [scrollWindow]="false">
+  <h2>What’s New</h2>
+  <div class="new-listing">
+      <div class="new-block" *ngFor="let item of allUpdateList; let index = index;" [ngClass]="{'new' : item?.read_status == 0}">
+          <span class="date">{{item?.launch_date | dateformat : 'MM/DD/YYYY'}}</span>
+          <h4>{{item?.title}}</h4>
+          <p id="news_item_{{index}}">{{item?.description}}</p>
+          <button *ngIf="item?.description?.length > 300" (click)="showMoreLessData(index)" id="myBtn_{{index}}" class="SeeMore">Read more</button>
+      </div>
+  </div>
+</div>

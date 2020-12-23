@@ -1,0 +1,42 @@
+<div class="breadcrumbs-sec">
+    <div class="container">
+        <ul class="breadcrubs-list previous-page">
+            <li (click)="goBack()">
+                <a href="javascript:void(0)" title="Back">Back</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="login-sec">
+    <div class="container">
+        <div class="col-sm-12">
+            <div class="border-sec form-sec counter-request feedback-page">
+                <div class="row">
+                    <div class="col-6 mx-auto">
+                        <form class="example-form" [formGroup]="feedbackForm" novalidate>
+                            <div class="form-group">
+                                <textarea class="form-control" rows="6" formControlName="feedback" name="feedback" placeholder="Share your feedback" onfocus="this.ph=this.placeholder;this.placeholder=''" onblur="this.placeholder = this.ph"></textarea>
+                            </div>
+                            <div *ngFor="let item of uploader.queue.slice().reverse()" class="form-group list-uploads">
+                              {{ item?.file?.name }} <span (click)="item.remove()"><i class="fa fa-trash"></i></span>
+                            </div>
+                            <div class="form-group">
+                                <div class="attach-form">
+                                  <input type="file" #feedbackImage accept="image/png,image/jpeg,application/pdf,.doc,.docx" ng2FileSelect [uploader]="uploader" multiple style="display:none" />
+                                  <!-- <input type="file" (change)="uploadFeedbackPic($event)" style="display: none;" accept="image/x-png,image/gif,image/jpeg" #feedbackImage>-->
+                                  <span class="icon" (click)="triggerUpload()">
+                                  <span class="fa fa-plus"></span>&nbsp;&nbsp;&nbsp;Attach file (JPEG, PNG, PDF, Word)
+                                  </span>
+                                </div>
+                            </div>
+                            <div class="validation-error" *ngIf="errorMessage?.length>0"><i class="fa fa-exclamation-circle"></i> {{errorMessage}}</div>
+                            <div class="form-group text-center">
+                                <button class="btn btn-primary" [disabled]="!feedbackForm.valid" type="submit" title="Submit" (click)="submitFeedback()">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

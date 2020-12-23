@@ -1,0 +1,110 @@
+<!-- <div class="sub-header" (window:resize)="onResize($event)" [ngClass]="{'mb-0' : selectedTab != 'News'}">
+    <div class="heading-sec">
+        <div class="container">
+            <div class="tab-sec" [ngClass]="{'no-dropdown' : selectedTab != 'News'}">
+                <div class="non-scrollable">
+                    <div class="tab-list"
+                        [ngClass]="{'deselected' : selectedTab != 'content', 'active':  selectedTab == 'content'}"
+                        (click)="changeEntityTab('content');">
+
+                        <span class="tab-name">Feed</span>
+                    </div>
+                    <div class="tab-list"
+                        [ngClass]="{'deselected' : selectedTab != 'News', 'active':  selectedTab == 'News'}"
+                        (click)="changeEntityTab('News');gaNewsClicksTracking()">
+
+                        <span class="tab-name">news</span>
+                    </div>
+                    <div class="tab-list">
+                        <span class="tab-name">Oncology</span>
+                    </div>
+                    <div class="tab-list">
+                        <span class="tab-name">Diabetes</span>
+                    </div>
+                    <div class="tab-list">
+                        <span class="tab-name">Lung Cancer</span>
+                    </div>
+                    <div class="tab-list">
+                        <span class="tab-name">Immunology</span>
+                    </div>
+                    <div class="tab-list">
+                        <span class="tab-name">Psoriasis</span>
+                    </div>
+                    <div class="tab-list">
+                        <span class="tab-name">News Analytics</span>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="filter-select filter-select-new" [ngClass]="{'filter-responsive': isNewUpdateAvailable == 0}" id="filterSec" *ngIf="selectedTab == 'News'">
+                <div class="filter-sec" (click)="showCategoryList()">
+                    <span class="icon-star" *ngIf="selectedIndex == 0"><i class="fa fa-star"></i></span>
+                    <div class="form-control custom-select" [ngClass]="{'hide-star' : selectedIndex != 0}">
+                        {{selectedType}}</div>
+                </div>
+                <div class="filter-dropdown filter" *ngIf="showCategory" [ngClass]="{'show' : showCategory}">
+                    <ul class="dropdown filter">
+                        <li *ngFor="let item of teamsGroups; let index = index;" (click)="getSpecificNewsList(item)">
+                            <div class="category" [ngClass]="{'fav-cate': item.id == 0}">
+                                <span class="icon-star" *ngIf="item.id == 0"><i class="fa fa-star"></i></span>
+                                <span class="name">{{item?.name}}</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <span class="last">
+                        <div class="category" (click)="getSpecificNewsList('analytics');gaNewsAnalysisTracking()">
+                            <span class="name">news Analytics</span>
+                        </div>
+                    </span>
+                </div>
+            </div> 
+        </div>
+        <div class="update-block" *ngIf="isNewUpdateAvailable == 0">
+            <div class="container">
+                <div class="update-bg">
+                    <p>There is a new update available, please <a href="javascript:void(0)"
+                            (click)="latestVersionOfdemo()">click here</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div> -->
+<div class="sub-header" (window:resize)="onResize($event)" [ngClass]="{'mb-0' : selectedTab != 'News'}">
+    <div class="heading-sec">
+        <div class="container">
+            <div class="tab-sec" [ngClass]="{'no-dropdown' : selectedTab != 'News'}">
+                <div class="scrollable-sec sub-header-sec">
+                    <ngx-slick-carousel class="carousel slider-tab" #slickModalTrending="slick-carousel"
+                        [config]="slideConfig">
+                        <!-- <ul ngxSlickItem>
+                            <li class="tab-list"
+                                [ngClass]="{'deselected' : selectedTab != 'content', 'active': selectedTab == 'content'}"
+                                (click)="changeEntityTab('content');">
+                                <span class="tab-name">Feed</span>
+                            </li>
+                        </ul> -->
+                        <ul ngxSlickItem>
+                            <li class="tab-list"
+                                [ngClass]="{'deselected' : selectedTab != 'News', 'active':  selectedTab == 'News' && selectedIndex == 0}"
+                                (click)="changeEntityTab('News');gaNewsClicksTracking()">
+                                <span class="tab-name">My news</span>
+                            </li>
+                        </ul>
+                        <ul ngxSlickItem *ngFor="let item of teamsGroups; let index = index;">
+                            <li class="tab-list" (click)="getSpecificNewsList(item)" [ngClass]="{'active':  selectedTab == 'News' && selectedIndex == item.id}">
+                                <span class="tab-name">{{item?.name}}</span>
+                            </li>
+                        </ul>
+                    </ngx-slick-carousel>
+                </div>
+            </div>
+        </div>
+        <div class="update-block" *ngIf="isNewUpdateAvailable == 0">
+            <div class="container">
+                <div class="update-bg">
+                    <p>There is a new update available, please <a href="javascript:void(0)"
+                            (click)="latestVersionOfdemo()">click here</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

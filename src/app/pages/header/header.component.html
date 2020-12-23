@@ -1,0 +1,185 @@
+<header>
+    <nav class="navbar" [ngClass]="{'navbar-heading': isHomePage == false}">
+        <div class="navbar-header">
+            <div class="logo">
+                <a class="navbar-brand" href="javascript:void(0)" title="demo" (click)="logoClick()" [routerLink]="['/home']">
+                    <img src="./assets/images/demo-logo-white.png" alt="demo" />
+                </a>
+            </div>
+            <div class="search-bar" [ngClass]="{'disabled': searchExist == true, 'search-focus': isSearchFocus == true, 'pageHeadingShow': isHomePage == false}">
+                <input id="searchInput" onfocus="this.ph=this.placeholder;this.placeholder=''"
+                    onblur="this.placeholder = this.ph" class="search form-control search-wrap" type="text"
+                    placeholder="{{placeHolder}}" (keyup.enter)="search($event)" [(ngModel)]="searchText"
+                    (input)="search($event)" *ngIf="isHomePage && isLogin && selectedEntity != 'biomarker' && selectedEntity != 'content'" (focus)="getSearchBoxFocus($event)"
+                    (focusout)="removeSearchBoxFocus($event)" (keyup.enter)="enterKeyPress($event)">
+                <span class="search-icon" *ngIf="isHomePage && isLogin && selectedEntity != 'biomarker' && selectedEntity != 'content'">
+                    <i class="fa fa-search" (click)="openSearchResultScreen()"></i>
+                </span>
+                <span class="page-heading" *ngIf="!isHomePage">{{newsData | trimstr : 45}}</span>
+            </div>
+
+            <div class="bell-icon" *ngIf="isNotificationExist" [ngClass]="{menubellClosed: !shouldShowSec, menubellOpen: shouldShowSec}"
+                (click)="hideShowSec();">
+                <span class="bell">
+                    <i class="fa fa-bell-o"></i>
+                    <span class="badge" *ngIf="newUpdateCount > 0"></span>
+                </span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </div>
+            <div class="menu-icon" [ngClass]="{menuClosed: !shouldShow, menuOpen: shouldShow}"
+                (click)="hideShowClass('menu');" *ngIf="isLogin">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </div>
+        </div>
+        <div class="menu-bar" id="myNavbar" [ngClass]="{show: shouldShow, hide: !shouldShow}" (click)="closeSideMenu()">
+            <div class="menu-content" (click)="clickSideMenu()">
+                <ul class="nav navbar-nav">
+                    <li class="user-info">
+                        <a href="javascript:void(0)">
+                            <span class="user-img" *ngIf="!usersData?.image_url"
+                                [ngClass]="{'img-round-sec' : usersData?.image_url == null}">
+                                <span class="text-round">{{getNameInitials()}}</span>
+                            </span>
+                            <span class="user-img" *ngIf="usersData?.image_url">
+                                <img [src]="usersData?.image_url" alt="User Icon">
+                            </span>
+                            <span class="user-name">{{usersData?.full_name}}</span>
+                        </a>
+                    </li>
+                    <li [ngClass]="{'active': isnewsActive == true}">
+                        <a href="javascript:void(0)" title="news" (click)="hideShowClass('News')" [routerLink]="['/home']" [queryParams]="{entity: 'News'}">
+                            <span class="user-icon icon">
+                                <img class="img-gray w20" src="./assets/images/m-user.svg">
+                                <img class="img-purple w20" src="./assets/images/m-user-hover.svg">
+                            </span>
+                            news <span class="badge noti-badge News-badge"
+                                *ngIf="usersData?.favourite_news_count > 0 && usersData?.favourite_news_count < 1000">{{usersData?.favourite_news_count}}</span>
+                            <span class="badge noti-badge News-badge"
+                                *ngIf="usersData?.favourite_news_count >= 1000">999+</span>
+                        </a>
+                    </li>
+                    <!-- <li [ngClass]="{'active': isDrugActive == true}">
+                        <a href="javascript:void(0)" title="Drugs" (click)="hideShowClass('drug')" [routerLink]="['/home']" [queryParams]="{entity: 'drug'}">
+                            <span class="icon drug-icon">
+                                <img class="img-gray" src="./assets/images/m-capsules.svg">
+                                <img class="img-purple" src="./assets/images/m-capsules-hover.svg">
+                            </span>
+                            Drugs <span class="badge noti-badge News-badge"
+                                *ngIf="usersData?.favourite_products_count > 0 && usersData?.favourite_products_count < 1000">{{usersData?.favourite_products_count}}</span>
+                            <span class="badge noti-badge News-badge"
+                                *ngIf="usersData?.favourite_products_count >= 1000">999+</span>
+                        </a>
+                    </li> -->
+
+                    <!-- <li [ngClass]="{'active': isBiomarkerActive == true}" *ngIf="showBiomarker =='yes'">
+                        <a href="javascript:void(0)" title="Onco Biomarkers" (click)="hideShowClass('biomarker')" [routerLink]="['/home']" [queryParams]="{entity: 'biomarker'}">
+                            <span class="user-icon icon">
+                                <img class="img-gray w18" src="./assets/images/m-clipboard.svg">
+                                <img class="img-purple w18" src="./assets/images/m-clipboard-hover.svg">
+                            </span> -->
+                            <!--<span class="badge noti-badge News-badge" *ngIf="showBiomarker =='yes'"></span>-->
+                            <!-- Onco Biomarkers
+                        </a>
+                    </li> -->
+<!-- 
+                    <li [ngClass]="{'active': isConferenceActive == true}">
+                        <a href="javascript:void(0)" title="Conferences" (click)="hideShowClass('conference')" [routerLink]="['/home']" [queryParams]="{entity: 'conference'}">
+                            <span class="user-icon icon">
+                                <img class="img-gray" src="./assets/images/m-comment.svg">
+                                <img class="img-purple" src="./assets/images/m-comment-hover.svg">
+                            </span>
+                            <span class="badge noti-badge News-badge"
+                                *ngIf="usersData?.purchased_conferences_count > 0 && usersData?.purchased_conferences_count < 1000">{{usersData?.purchased_conferences_count}}</span>
+                            <span class="badge noti-badge News-badge"
+                                *ngIf="usersData?.purchased_conferences_count >= 1000">999+</span>Conferences
+                        </a>
+                    </li> -->
+                </ul>
+                <ul class="nav navbar-nav middle_list">
+                    <!-- <li [ngClass]="{'active': isContentActive == true}">
+                        <a href="javascript:void(0)" title="Feed" (click)="hideShowClass('content')" [routerLink]="['/home']" [queryParams]="{entity: 'content'}">
+                            <span class="user-icon icon">
+                                <img class="img-gray w18" src="./assets/images/m-home.svg">
+                                <img class="img-purple w18" src="./assets/images/m-home-hover.svg">
+                            </span>
+                            Feed
+                        </a>
+                    </li> -->
+                    <li routerLinkActive="active">
+                        <a href="javascript:void(0)" title="Notes" (click)="hideShowClass('')"
+                            [routerLink]="getRedirectionlink('/notes-list')">
+                            <span class="user-icon icon">
+                                <img class="img-gray w18" src="./assets/images/m-file-alt.svg">
+                                <img class="img-purple w18" src="./assets/images/m-file-alt-hover.svg">
+                            </span>
+                            Notes
+                        </a>
+                    </li>
+                    <li routerLinkActive="active">
+                        <a href="javascript:void(0)" title="Bookmarks" (click)="hideShowClass('')"
+                            [routerLink]="getRedirectionlink('/bookmark-news')">
+                            <span class="user-icon icon">
+                                <img class="img-gray w18" src="./assets/images/m-bookmark.svg">
+                                <img class="img-purple w18" src="./assets/images/m-bookmark-hover.svg">
+                            </span>
+                            Bookmarks
+                        </a>
+                    </li>
+
+                </ul>
+                <ul class="nav navbar-nav bottom-list">
+                    <li routerLinkActive="active">
+                        <a [routerLink]="getRedirectionlink('/subscription-list')" href="javascript:void(0)"
+                            title="My Subscriptions" (click)="hideShowClass('')">
+                            My Subscriptions
+                        </a>
+                    </li>
+                    <!-- <li routerLinkActive="active" *ngIf="isShowNotification">
+<a href="javascript:void(0)" title="Notifications" [routerLink]="getRedirectionlink('/notification')" (click)="hideShowClass(''); notificationCounts=0">
+<span class="badge noti-badge icon" *ngIf="notificationCounts > 0 && notificationCounts < 1000">{{notificationCounts}}</span>
+<span class="badge noti-badge icon" *ngIf="notificationCounts >= 1000">999+</span>
+Notifications
+</a>
+</li> -->
+                    <li routerLinkActive="active">
+                        <a href="javascript:void(0)" title="Terms of Service" (click)="hideShowClass('')"
+                            [routerLink]="'/terms-of-service'">Terms of Service</a>
+                    </li>
+                    <li routerLinkActive="active">
+                        <a href="javascript:void(0)" title="Privacy Policy" (click)="hideShowClass('')"
+                            [routerLink]="'/privacy-policy'">Privacy Policy</a>
+                    </li>
+                    <li routerLinkActive="active">
+                        <a href="javascript:void(0)" title="Feedback" (click)="hideShowClass('')"
+                            [routerLink]="getRedirectionlink('/feedback')">Feedback</a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" title="Sign Out" (click)="signOutModal()">Sign Out</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="menu-footer">
+                &copy; {{currentYear}} demo. All Rights Reserved.
+            </div>
+        </div>
+
+        <!--what's new section-->
+        <div class="menu-bar what-next-sec" *ngIf="isNotificationExist" [ngClass]="{showMenu: shouldShowSec, hideMenu: !shouldShowSec}" (click)="closeNotificationMenu()">
+            <app-whats-new-update (click)="closeNotificationContent()"></app-whats-new-update>
+        </div>
+    </nav>
+</header>
+<div class="update-block" *ngIf="isNewUpdateAvailable == 0 && !isHome" [ngClass]="{'disabled-update-block': searchExist == false && isSearchFocus == true}">
+    <div class="container">
+        <div class="update-bg">
+            <p>There is a new update available, please <a href="javascript:void(0)" (click)="latestVersionOfdemo()">click here</a>.</p>
+        </div>
+    </div>
+</div>
+<app-news-search-list *ngIf="isShow" [searchText]="searchText"></app-news-search-list>
+<app-drug-search-list *ngIf="isDrugShow" [searchText]="searchText"></app-drug-search-list>
+<app-conference-search-list *ngIf="isConferenceShow" [searchText]="searchText"></app-conference-search-list>
